@@ -45,6 +45,9 @@ class Api(object):
         return self._sendRequest(url)
     
     def _sendRequest(self, url):
+        return self._RequestUrl('getvehicles', {param: vals})
+    
+    def _RequestUrl(self, page, params=None):
         """
         sends the request to the API over HTTP
         """
