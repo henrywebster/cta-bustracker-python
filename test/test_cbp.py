@@ -15,7 +15,7 @@ class CBPTest(unittest.TestCase):
     
     def setUp(self):
         
-        self.api_key = ''  #   add secret API key
+        self.api_key = '9s9kctLMdftQ4UB2sdPjG26g8'  #   add secret API key
         self.request_base = 'http://ctabustracker.com/bustime/api/v2/'
 
         self.api = bustracker.Api(self.api_key)
