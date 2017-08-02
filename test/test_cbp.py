@@ -23,8 +23,17 @@ class CBPTest(unittest.TestCase):
     def test_getTime(self):
         
         response = self.api.getTime()
-        self.assertIn('tm', response)
+        self.assertIn('tm', response['bustime-response'])
 
+    def test_getVehicleById(self):
+
+        response = self.api.getVehiclesById(['1147','1192'])
+        self.assertIn('vehicle', response['bustime-response'])
+
+    def test_getVehiclesByRoute(self):
+
+        response = self.api.getVehiclesByRoute(['66','70'])
+        self.assertIn('vehicle', response['bustime-response'])
 
 
 if __name__ == '__main__':

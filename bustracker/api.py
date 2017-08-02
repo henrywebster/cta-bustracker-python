@@ -1,4 +1,8 @@
+__author__ = 'Henry Webster <hwebster@mail.depaul.edu>'
+__date__ = '2 August 2017'
+
 import urllib.request
+import urllib.parse
 import json
 import sys
 
@@ -7,48 +11,80 @@ class Api(object):
     CTABusTracker API
     """
 
-    def __init__(self, api_key=None, response_format='json'):
+    def __init__(self, api_key=None):
+        """
+        Construct with api key and build the skeleton of a request URL
+        """
 
         self.api_key = api_key
-        self.response_format = response_format.lower()
-        self.request_base = 'http://www.ctabustracker.com/bustime/api/v2/'
+        self.request_template = 'http://www.ctabustracker.com/bustime/api/v2/{}/?key={}{}&format=json'
 
     def getTime(self):
         """
         Returns the current system time
         """
 
-        return self._RequestUrl('gettime')
+        url = self._buildUrl('gettime')
+        self._verifyGetTime(url)
+        return self._sendRequest(url)
    
-    def getVehicles(self, param, vals, tmres='m'):
+    def getVehiclesById(self, vids, tmres='m'):
+
+
+        url = self._buildUrl('getvehicles', {'vid': vids, 'tmres': tmres})
+        self._verifyGetVehicles(url)
+        return self._sendRequest(url)
+
+    def getVehiclesByRoute(self, rts, tmres='m'):
         """
         Returns the most-recent status for each vehicle
         """
 
-        return self._RequestUrl('getvehicles', {param: vals})
-
+        url = self._buildUrl('getvehicles', {'rt': rts, 'tmres': tmres})
+        self._verifyGetVehicles(url)
+        return self._sendRequest(url)
     
-    def _RequestUrl(self, page, params=None):
+    def _sendRequest(self, url):
         """
         sends the request to the API over HTTP
         """
         
+        return json.loads(urllib.request.urlopen(url).read().decode())
+
+    def _buildUrl(self, page, parameters=None):
+        """
+        create the full URL for the API request
+        """
+
         p = str()
-        for param in params:
-            p = p + '&{}={}'.format(param, ','.join(map(str, params[param])))
-
-
-        url = '{}/{}/?key={}{}&format={}'.format(self.request_base, page, self.api_key, p, self.response_format)
-        print(url)
-
         
-        response = json.loads(urllib.request.urlopen(url).read().decode())['bustime-response']
+        if parameters is not None:
         
-        if 'error' not in response:
-            return response
-        else:
-            self._error(response['error'])
+            for param in parameters:
+                p = p + '&{}={}'.format(param, ','.join(map(str, parameters[param])))
+            
 
+        return self.request_template.format(page, self.api_key, p)
+
+    def _verifyGetTime(self, url):
+        """
+        Make sure the get time url is valid for the API call
+        """
+
+        parsedUrl = urllib.parse.parse_qs(urllib.parse.urlsplit(url).query)
+
+        #   TODO fix
+        return True
+
+    def _verifyGetVehicles(self, url):
+        
+
+        parsedUrl = urllib.parse.parse_qs(urllib.parse.urlsplit(url).query)
+
+        if 'vid' and 'rt' in parsedUrl:
+            return False
+
+        return True
 
     def _error(self, error):
 
