@@ -54,6 +54,17 @@ class Api(object):
 
         return self._sendRequest(self._buildUrl('getroutes'))
 
+    def getDirections(self, rt):
+        """
+        Returns the set of directions serviced by the specified route
+        """
+
+        #   rt arg must be a single string or integer
+        if type(rt) not in (str, int):
+            raise RuntimeError('\'rt\' argument must be a single, valid route designator.')
+
+        return self._sendRequest(self._buildUrl('getdirections', {'rt': rt}))
+
     def _sendRequest(self, url):
         """
         sends the request to the API over HTTP
@@ -69,10 +80,12 @@ class Api(object):
         p = str()
         
         if parameters is not None:
-        
+       
             for param in parameters:
-                p = p + '&{}={}'.format(param, ','.join(map(str, parameters[param])))
-            
+                if type(parameters[param]) is list:
+                    p = p + '&{}={}'.format(param, ','.join(map(str, parameters[param])))
+                else:
+                    p = p + '&{}={}'.format(param, str(parameters[param]))
 
         return self.request_template.format(page, self.api_key, p)
 

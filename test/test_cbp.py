@@ -26,18 +26,18 @@ class CBPTest(unittest.TestCase):
         response = self.api.getTime()
         self.assertIn('tm', response['bustime-response'])
 
-    def test_getVehicleByIdSeconds(self):
+    def test_getVehiclesByIdSeconds(self):
 	
         response = self.api.getVehiclesById(['1103','1192'], tmres='s')
         self.assertIn('vehicle', response['bustime-response'])
 	
-    def test_getVehicleByIdMinutes(self):
+    def test_getVehiclesByIdMinutes(self):
 
 		
         response = self.api.getVehiclesById(['1103','1192'], tmres='m')
         self.assertIn('vehicle', response['bustime-response'])
 	
-    def test_getVehicleByIdExceptionRaised(self):
+    def test_getVehiclesByIdExceptionRaised(self):
 
         #	check invalid tmres parameter raises runtime exception
         self.assertRaises(RuntimeError, self.api.getVehiclesById, ['2000'], tmres='x')
@@ -54,11 +54,20 @@ class CBPTest(unittest.TestCase):
         response = self.api.getRoutes()
         self.assertIn('routes', response['bustime-response'])
 
-    #def test_buildUrl(self):
-		
-    #	test getTimes
-    #	parsedUrl = urllib.parse.parse_qs(urllib.parse.urlsplit(url).query)
+    def test_getDirectionsByInt(self):
 
+        response = self.api.getDirections(8)
+        self.assertIn('directions', response['bustime-response'])
+
+    def test_getDirectionsByString(self):
+
+        response = self.api.getDirections('9')
+        self.assertIn('directions', response['bustime-response'])
+
+    def test_getDirectionsExceptionRaised(self):
+
+        self.assertRaises(RuntimeError, self.api.getDirections, ['9', 22])
+    
 
 if __name__ == '__main__':
     unittest.main()
