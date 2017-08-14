@@ -46,7 +46,14 @@ class Api(object):
 		
         url = self._buildUrl('getvehicles', {'rt': rts, 'tmres': tmres})
         return self._sendRequest(url)
-    
+   
+    def getRoutes(self):
+        """
+        Returns the entire list of bus routes serviced by the CTA by number and name designation
+        """
+
+        return self._sendRequest(self._buildUrl('getroutes'))
+
     def _sendRequest(self, url):
         """
         sends the request to the API over HTTP
